@@ -36,7 +36,6 @@ public class UserController {
 	public JSONObject registerNewUser(@RequestBody MUser user) throws SQLException {
 		System.out.println("registration started");
 		return userDao.registerUser(user);
-		
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
@@ -44,10 +43,5 @@ public class UserController {
 	public JSONObject loginUser(@RequestBody MUser user) throws SQLException {
 		System.out.println("Login started");
 		return userDao.loginUser(user);
-	}
-	
-	@GetMapping("/{id}")
-	public JSONObject getBikeById(@PathVariable("id") long id) throws SQLException {
-		return null;
 	}
 }
