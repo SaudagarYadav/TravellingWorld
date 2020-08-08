@@ -12,8 +12,8 @@ import org.hibernate.SessionFactory;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
-import com.TravellingWorld.validation.GenTool;
-import com.TravellingWorld.validation.ValidationConstant;
+import com.TravellingWorld.common.resource.Transaction;
+import com.TravellingWorld.common.validation.ValidationConstant;
 
 import hibernate.HibernateDao;
 import hibernate.table.DBConstant;
@@ -33,6 +33,9 @@ public class UserDao {
 		if (isUserAlreadyExits(user)) {
 			user.setRegistrationDate(new Date());
 			hibernateDao.insertIntoMUser(user);
+			userObj.put(UserJsonConstants.ERROR_MSG, ValidationConstant.ERROR_MSG_USER_ALREDY_EXITS);
+			userObj.put(UserJsonConstants.ERROR_CODE, ValidationConstant.ERROR_CODE_USER_ALREDY_EXITS);
+			userObj.put(UserJsonConstants.STATUS, true);
 		} else {
 			userObj.put(UserJsonConstants.ERROR_MSG, ValidationConstant.ERROR_MSG_USER_ALREDY_EXITS);
 			userObj.put(UserJsonConstants.ERROR_CODE, ValidationConstant.ERROR_CODE_USER_ALREDY_EXITS);
@@ -43,11 +46,10 @@ public class UserDao {
 	}
 
 	private boolean isUserAlreadyExits(MUser user) throws SQLException {
-
 		Connection con = null;
 		int count = 1;
 		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/myapplication", "root", "saudu@123");
+			con = Transaction.getConection();
 			PreparedStatement pred = con.prepareStatement(UserQuery.getSameUserNameCount);
 			pred.setString(count++, user.getEmailId());
 			pred.setString(count++, user.getContactNo());
@@ -64,9 +66,7 @@ public class UserDao {
 		} finally {
 			con.close();
 		}
-		
 		return false;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,16 +78,16 @@ public class UserDao {
 		userObj.put(UserJsonConstants.STATUS, false);
 		userObj.put(UserJsonConstants.ERROR_CODE, ValidationConstant.ERROR_CODE_NO_SUCH_USER);
 		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/myapplication", "root", "saudu@123");
+			con = Transaction.getConection();
 			PreparedStatement pred = con.prepareStatement(UserQuery.getUserData);
 			pred.setString(count++, user.getUserName());
 			pred.setString(count++, user.getUserName());
 			ResultSet rs = pred.executeQuery();
 			while (rs.next()) {
 				if (user.getPassword().equals(rs.getString(DBConstant.PASSWORD))) {
-					GenTool.userResultsetToJson(userObj, rs, true);
+					UserHelper.userResultsetToJson(userObj, rs, true);
 				} else {
-					GenTool.userResultsetToJson(userObj, rs, false);
+					UserHelper.userResultsetToJson(userObj, rs, false);
 				}
 				break;
 			}
@@ -99,4 +99,5 @@ public class UserDao {
 		return userObj;
 	}
 
+	
 }

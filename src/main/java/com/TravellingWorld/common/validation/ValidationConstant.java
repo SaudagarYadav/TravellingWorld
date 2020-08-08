@@ -1,4 +1,4 @@
-package com.TravellingWorld.validation;
+package com.TravellingWorld.common.validation;
 
 public class ValidationConstant {
 	
