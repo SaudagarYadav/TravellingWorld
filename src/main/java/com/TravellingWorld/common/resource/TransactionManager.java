@@ -8,9 +8,20 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class Transaction {
+import com.TravellingWorld.common.validation.GenTool;
+
+public class TransactionManager {
 		
-	public static Connection getConection() {
+	private TransactionManager() {};
+	private static TransactionManager transactionManagerObj;
+	public static TransactionManager getInstance() {
+		if (GenTool.isObjEmpty(transactionManagerObj)) {
+			transactionManagerObj = new TransactionManager();
+		}
+		return transactionManagerObj;
+	}
+	
+	public Connection getConection() {
 		Connection con = null;
 		try {
 			con =  DriverManager.getConnection("jdbc:mysql://localhost:3306/myapplication", "root", "saudu@123");
@@ -20,7 +31,7 @@ public class Transaction {
 		return con;
 	}
 	
-	public static Session getHibernateSession() {
+	public Session getHibernateSession() {
 		SessionFactory factory = null;
 		Session session = null;
 		try {
@@ -32,7 +43,6 @@ public class Transaction {
 		} catch (Exception e) {
 			System.out.println("Error occured while creating transaction : "  +e);
 		}
-
 		return session;
 	}
 }

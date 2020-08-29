@@ -23,25 +23,19 @@ import hibernate.table.MUser;
 public class UserController {
 	
 	@Autowired
-	private UserDao userDao;
+	private UserService userService;
 	
-	@GetMapping 
-	public JSONArray getBikelist() throws SQLException{
-		System.out.println("getbike");
-		return null;
-	}
-	
-	@PostMapping 
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public JSONObject registerNewUser(@RequestBody MUser user) throws SQLException {
 		System.out.println("registration started");
-		return userDao.registerUser(user);
+		return userService.registerUser(user);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public JSONObject loginUser(@RequestBody MUser user) throws SQLException {
 		System.out.println("Login started");
-		return userDao.loginUser(user);
+		return userService.loginUser(user);
 	}
 }
